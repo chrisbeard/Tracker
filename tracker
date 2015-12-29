@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+
+import time
+import sys
+
+# DEBUG = True
+DEBUG = False
+
+def debug(*args):
+    if DEBUG:
+        print(args)
+
+def help(error_message = ""):
+    print(error_message)
+    option = "  {:16} {}"
+    help_text = [
+        "Usage: tracker COMMAND [TRACKER_NAME] [ARGS]",
+        "",
+        "Commands:",
+        option.format("stats", "general statistics"),
+        option.format("plot", "graphical representation"),
+        "",
+        option.format("Tracker Name", "title of data to track"),
+        "",
+        option.format("Args", "value to add to specified tracker"),
+    ]
+    print("\n".join(help_text))
+    sys.exit(1)
+
+def parse_input():
+    debug(sys._getframe().f_code.co_name)
+    args = [arg.lower() for arg in sys.argv[1:]]
+    debug("ARGS:", args)
+
+    commands = ["stats", "plot"]
+
+    if len(args) == 0:
+        help("No command given\n")
+    if args[0] not in commands:
+        help("Invalid command: '" + args[0] + "'\n")
+
+    
+if __name__ == '__main__':
+    parse_input()
