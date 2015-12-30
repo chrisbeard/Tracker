@@ -10,8 +10,14 @@ def debug(*args):
     if DEBUG:
         print(args)
 
-def help(error_message = ""):
-    print(error_message)
+def help(error_message = None):
+    """Display usage information, exit program.
+    
+    Args:
+        error_message: optional message to display to user
+    """
+    if error_message:
+        print("Error: " + error_message + "\n")
     option = "  {:16} {}"
     help_text = [
         "Usage: tracker COMMAND [TRACKER_NAME] [ARGS]",
@@ -27,11 +33,56 @@ def help(error_message = ""):
     print("\n".join(help_text))
     sys.exit(1)
 
-def parse_input():
+
+def display_stats(trackers):
+    """Show stats for trackers
+
+    Input:
+        trackers: list of tracker names, empty implies global stats
+    """
+    if len(trackers) == 0:
+        # TODO display global stats
+        # number of trackers, number of elements in each tracker
+        print("Display gobal stats")
+    else:
+        # TODO verify all trackers exist
+        for t in trackers:
+            print("Display stats for '" + t + "'")
+
+
+def display_plot(tracker):
+    """Show plot for a tracker
+
+    Input:
+        tracker: tracker name to plot
+    """
+    if len(tracker) != 1:
+        help("Only a single tracker can be plotted")
+    else:
+        print("Display plot for '" + tracker[0] + "'")
+
+
+def handle_command(args):
+    """Handles execution of valid commands
+    """
+    command = args[0]
+    # TODO handle all possible commands
+    handlers = {
+        "stats" : display_stats,
+        "plot"  : display_plot
+    }
+    handlers[command](args[1:])
+
+
+def validate_input():
+    """Ensures user input contains valid commands
+    """
     debug(sys._getframe().f_code.co_name)
     args = [arg.lower() for arg in sys.argv[1:]]
     debug("ARGS:", args)
 
+    # available commands
+    # TODO consider consolidating with help(), handle_command
     commands = ["stats", "plot"]
 
     if len(args) == 0:
@@ -39,6 +90,7 @@ def parse_input():
     if args[0] not in commands:
         help("Invalid command: '" + args[0] + "'\n")
 
+    handle_command(args)
     
 if __name__ == '__main__':
-    parse_input()
+    validate_input()
