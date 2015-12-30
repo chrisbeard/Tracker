@@ -23,6 +23,7 @@ def help(error_message = None):
         "Usage: tracker COMMAND [TRACKER_NAME] [ARGS]",
         "",
         "Commands:",
+        option.format("update", "save new data to tracker"),
         option.format("stats", "general statistics"),
         option.format("plot", "graphical representation"),
         "",
@@ -32,6 +33,19 @@ def help(error_message = None):
     ]
     print("\n".join(help_text))
     sys.exit(1)
+
+
+def update(tracker_info):
+    """Update tracker with new data
+
+    Input:
+        tracker_info: list in the form [tracker, data]
+    """
+    if len(tracker_info) == 0:
+        help("Must supply tracker and data to update")
+    elif len(tracker_info) == 1:
+        # TODO validate tracker
+        help("Must supply data to update '" + tracker_info[0] + "'")
 
 
 def display_stats(trackers):
@@ -68,8 +82,9 @@ def handle_command(args):
     command = args[0]
     # TODO handle all possible commands
     handlers = {
-        "stats" : display_stats,
-        "plot"  : display_plot
+        "update" : update_tracker,
+        "stats"  : display_stats,
+        "plot"   : display_plot
     }
     handlers[command](args[1:])
 
@@ -83,7 +98,7 @@ def validate_input():
 
     # available commands
     # TODO consider consolidating with help(), handle_command
-    commands = ["stats", "plot"]
+    commands = ["update", "stats", "plot"]
 
     if len(args) == 0:
         help("No command given\n")
