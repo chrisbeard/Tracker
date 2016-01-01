@@ -23,6 +23,7 @@ def help(error_message = None):
         "Usage: tracker COMMAND [TRACKER_NAME] [ARGS]",
         "",
         "Commands:",
+        option.format("list", "list available trackers"),
         option.format("update", "save new data to tracker"),
         option.format("stats", "general statistics"),
         option.format("plot", "graphical representation"),
@@ -35,17 +36,49 @@ def help(error_message = None):
     sys.exit(1)
 
 
-def update(tracker_info):
+def tracker_list():
+    """Returns list of tracker names"""
+    # TODO retreive tracker names
+    return ["pushups"]
+
+
+def tracker_exists(tracker, trackers = None):
+    """Return whether given tracker exists"""
+    if trackers is None:
+        trackers = tracker_list()
+
+    return tracker in trackers
+
+
+def display_list(args = None):
+    """Lists available trackers"""
+    trackers = tracker_list()
+    if len(trackers) == 0:
+        print("No trackers found.")
+    else:
+        print("Current Trackers:")
+        tracker_option = "\t{}"
+        for t in trackers:
+            print(tracker_option.format(t))
+
+
+def update_tracker(tracker_info):
     """Update tracker with new data
 
     Input:
         tracker_info: list in the form [tracker, data]
     """
+    # Ensure tracker and data are provided
     if len(tracker_info) == 0:
         help("Must supply tracker and data to update")
     elif len(tracker_info) == 1:
-        # TODO validate tracker
         help("Must supply data to update '" + tracker_info[0] + "'")
+
+    tracker = tracker_info[0]
+    # Ensure tracker is valid
+    if not tracker_exists(tracker):
+        help("Tracker '" + tracker + "' not found")
+    print("Updating '" + tracker + "' with " + str(tracker_info[1:]))
 
 
 def display_stats(trackers):
@@ -81,7 +114,10 @@ def handle_command(args):
     """
     command = args[0]
     # TODO handle all possible commands
+    # Map to command's handler function
+    # Remaining args are passed regardless, dealt with in handler
     handlers = {
+        "list"   : display_list,
         "update" : update_tracker,
         "stats"  : display_stats,
         "plot"   : display_plot
@@ -98,7 +134,7 @@ def validate_input():
 
     # available commands
     # TODO consider consolidating with help(), handle_command
-    commands = ["update", "stats", "plot"]
+    commands = ["list", "update", "stats", "plot"]
 
     if len(args) == 0:
         help("No command given\n")
