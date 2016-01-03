@@ -2,13 +2,12 @@
 
 import time
 import sys
+import sqlite3
 
-# DEBUG = True
-DEBUG = False
+# Data stored in sqlite so it can be shared easily
+tracker_db = sqlite3.connect('tracker_data.db')
+db = tracker_db.cursor()
 
-def debug(*args):
-    if DEBUG:
-        print(args)
 
 def help(error_message = None):
     """Display usage information, exit program.
@@ -164,9 +163,7 @@ def handle_command(args):
 def validate_input():
     """Ensures user input contains valid commands
     """
-    debug(sys._getframe().f_code.co_name)
     args = [arg.lower() for arg in sys.argv[1:]]
-    debug("ARGS:", args)
 
     # available commands
     # TODO consider consolidating with help(), handle_command
