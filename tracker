@@ -8,7 +8,6 @@ import sqlite3
 tracker_db = sqlite3.connect('tracker_data.db')
 db = tracker_db.cursor()
 
-
 def help(error_message = None):
     """Display usage information, exit program.
     
@@ -22,6 +21,7 @@ def help(error_message = None):
         "Usage: tracker COMMAND [TRACKER_NAME] [ARGS]",
         "",
         "Commands:",
+        option.format("help", "display this dialog"),
         option.format("create", "add new tracker"),
         option.format("delete", "remove tracker"),
         option.format("list", "list available trackers"),
@@ -39,12 +39,18 @@ def help(error_message = None):
 
 def tracker_list():
     """Returns list of tracker names"""
-    # TODO retreive tracker names
-    return ["pushups"]
+    tables = db.execute("SELECT name FROM sqlite_master WHERE type='table'")
+    names = [tup[0] for tup in tables.fetchall()]
+    return names
 
 
 def tracker_exists(tracker, trackers = None):
-    """Return whether given tracker exists"""
+    """Return whether given tracker exists
+
+    Input:
+        tracker: name of tracker to check
+        trackers: optional list of trackers to determine existance with
+    """
     if trackers is None:
         trackers = tracker_list()
     return tracker in trackers
@@ -52,7 +58,9 @@ def tracker_exists(tracker, trackers = None):
 
 def create_tracker(tracker_info):
     """Create new tracker
-    Ensures a tracker is provided and does not already exist
+
+    Input:
+        tracker_info: tracker which does not already exist
     """
     # Ensure tracker is provided
     if len(tracker_info) != 1:
@@ -60,13 +68,19 @@ def create_tracker(tracker_info):
     tracker = tracker_info[0]
     if tracker_exists(tracker):
         help("Tracker '" + tracker + "' already exists")
+
     # TODO add tracker
+    stmt = "CREATE TABLE IF NOT EXISTS " + tracker + " (day date, value real)"
+    resp = db.execute(stmt)
+    tracker_db.commit()
     print("Tracker '" + tracker + "' created")
 
 
 def delete_tracker(tracker_info):
     """Delete existing tracker
-    Ensures a tracker is provided and exists
+
+    Input:
+        tracker_info: existing tracker
     """
     # Ensure tracker is provided
     if len(tracker_info) != 1:
@@ -75,10 +89,12 @@ def delete_tracker(tracker_info):
     if not tracker_exists(tracker):
         help("Cannot delete unknown tracker '" + tracker + "'")
 
+    # User must confirm table to drop
     confirm = input("Type '" + tracker + "' to confirm: ").strip()
     if confirm == tracker:
+        db.execute("DROP TABLE IF EXISTS " + tracker)
+        tracker_db.commit()
         print("Tracker named '" + tracker + "' deleted")
-        # TODO delete tracker
     else:
         print("Deletion cancelled")
 
@@ -171,10 +187,13 @@ def validate_input():
 
     if len(args) == 0:
         help("No command given\n")
+    if args[0] in ["help", "usage"]:
+        help()
     if args[0] not in commands:
         help("Invalid command: '" + args[0] + "'\n")
 
     handle_command(args)
     
+
 if __name__ == '__main__':
     validate_input()
