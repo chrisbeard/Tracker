@@ -142,6 +142,8 @@ def display_stats(trackers):
     else:
         # TODO verify all trackers exist
         for t in trackers:
+            if not tracker_exists(t):
+                help("Cannot show stats for unknown tracker '" + t + "'")
             print("Display stats for '" + t + "'")
 
 
@@ -154,7 +156,10 @@ def display_plot(tracker):
     if len(tracker) != 1:
         help("Only a single tracker can be plotted")
     else:
-        print("Display plot for '" + tracker[0] + "'")
+        tracker = tracker[0]
+        if not tracker_exists(tracker):
+            help("Cannot show stats for unknown tracker '" + tracker + "'")
+        print("Display plot for '" + tracker + "'")
 
 
 def handle_command(args):
