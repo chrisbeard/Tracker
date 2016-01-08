@@ -140,7 +140,6 @@ def display_stats(trackers):
         # number of trackers, number of elements in each tracker
         print("Display gobal stats")
     else:
-        # TODO verify all trackers exist
         days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         for t in trackers:
             if not tracker_exists(t):
@@ -152,17 +151,25 @@ def display_stats(trackers):
             print(t + ": " + str(num_entries) + " entries")
             counts = [0,0,0,0,0,0,0]
             tally = [0,0,0,0,0,0,0]
+            min_value = None
+            max_value = None
             for r in results:
                 count = r[2]
                 day = datetime.strptime(r[1], "%Y-%m-%d").date()
                 day_index = day.weekday()
                 counts[day_index] += count
                 tally[day_index] += 1
+                if not min_value or min_value > count:
+                    min_value = count
+                if not max_value or max_value < count:
+                    max_value = count
 
             point = "  {:3} -- {}"
 
             print(point.format("total", sum(counts)))
             print(point.format("average", sum(counts)/sum(tally)))
+            print(point.format("min", min_value))
+            print(point.format("max", max_value))
 
             print()
 
