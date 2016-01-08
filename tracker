@@ -87,9 +87,14 @@ def update_tracker(tracker_info):
         data = float(tracker_info[1])
     except ValueError:
         help("'" + tracker_info[1] + "' is not numerical, update failed")
-
-    db.execute("INSERT INTO trackers VALUES (?, date('now', 'localtime'), ?)",
-            (tracker, data))
+    # Update existing row for today's value if possible
+    db.execute('''UPDATE trackers SET value = value + :data
+                    WHERE name = :tracker AND day=date('now', 'localtime')''',
+                    {"data": data, "tracker": tracker})
+    # Otherwise, insert a new row
+    if not db.rowcount:
+        db.execute("INSERT INTO trackers VALUES (?, date('now', 'localtime'), ?)",
+                (tracker, data))
     tracker_db.commit()
     print("'" + tracker + "' updated")
 
