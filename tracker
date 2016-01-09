@@ -141,9 +141,20 @@ def display_stats(trackers):
         trackers: list of tracker names, empty implies global stats
     """
     if len(trackers) == 0:
-        # TODO display global stats
         # number of trackers, number of elements in each tracker
-        print("Display gobal stats")
+        trackers = tracker_list()
+        print(str(len(trackers)) + " tracker(s)")
+        cursor = db.execute("SELECT * FROM trackers")
+        entries = cursor.fetchall()
+        print(str(len(entries)) + " total entries")
+
+        for t in trackers:
+            print()
+            print(t)
+            t_cursor = db.execute("SELECT * FROM trackers WHERE name=:name",
+                    {'name': t})
+            t_entries = cursor.fetchall()
+            print("  " + str(len(t_entries)) + " entries")
     else:
         days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         for t in trackers:
