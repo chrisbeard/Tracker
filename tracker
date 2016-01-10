@@ -12,14 +12,14 @@ db.execute('''CREATE TABLE IF NOT EXISTS trackers
 tracker_db.commit()
 
 
-def help(error_message = None):
+def error(message = None):
+    if message is not None:
+        print(message)
+    exit(1)
+
+def help():
     """Display usage information, exit program.
-    
-    Args:
-        error_message: optional message to display to user
     """
-    if error_message:
-        print("Error: " + error_message + "\n")
     option = "  {:16} {}"
     help_text = [
         "Usage: tracker COMMAND [TRACKER_NAME] [ARGS]",
@@ -67,11 +67,11 @@ def update_tracker(tracker_info):
     """
     # Ensure tracker and data are provided
     if len(tracker_info) == 0:
-        help("Must supply tracker and data to update")
+        error("Must supply tracker and data to update")
     elif len(tracker_info) == 1:
-        help("Must supply data to update '" + tracker_info[0] + "'")
+        error("Must supply data to update '" + tracker_info[0] + "'")
     elif len(tracker_info) > 2:
-        help("Too many arguments given for update command")
+        error("Too many arguments given for update command")
 
     # Ensure tracker exists
     tracker = tracker_info[0]
@@ -79,14 +79,13 @@ def update_tracker(tracker_info):
         print("Tracker '" + tracker + "' not found")
         confirm = input("Type '" + tracker + "' to confirm creation: ").strip()
         if confirm != tracker:
-            print("Update failed")
-            sys.exit(1)
+            error("Update failed")
 
     # Ensure data is a number
     try:
         data = float(tracker_info[1])
     except ValueError:
-        help("'" + tracker_info[1] + "' is not numerical, update failed")
+        error("'" + tracker_info[1] + "' is not numerical, update failed")
     # Update existing row for today's value if possible
     db.execute('''UPDATE trackers SET value = value + :data
                     WHERE name = :tracker AND day=date('now', 'localtime')''',
@@ -119,10 +118,10 @@ def delete_tracker(tracker):
     """
     # Ensure tracker is provided
     if len(tracker) != 1:
-        help("Must supply tracker name to delete")
+        error("Must supply tracker name to delete")
     tracker = tracker[0]
     if not tracker_exists(tracker):
-        help("Cannot delete unknown tracker '" + tracker + "'")
+        error("Cannot delete unknown tracker '" + tracker + "'")
 
     # User must confirm tracker to delete all entries
     confirm = input("Type '" + tracker + "' to confirm: ").strip()
@@ -159,7 +158,7 @@ def display_stats(trackers):
         days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         for t in trackers:
             if not tracker_exists(t):
-                help("Cannot show stats for unknown tracker '" + t + "'")
+                error("Cannot show stats for unknown tracker '" + t + "'")
             query = "SELECT * FROM TRACKERS where name=:tracker"
             cursor = db.execute(query, {"tracker": t})
             results = cursor.fetchall()
@@ -210,11 +209,11 @@ def display_plot(tracker):
         tracker: tracker name to plot
     """
     if len(tracker) != 1:
-        help("Only a single tracker can be plotted")
+        error("Only a single tracker can be plotted")
     else:
         tracker = tracker[0]
         if not tracker_exists(tracker):
-            help("Cannot show stats for unknown tracker '" + tracker + "'")
+            error("Cannot show stats for unknown tracker '" + tracker + "'")
         print("Display plot for '" + tracker + "'")
 
 
@@ -245,11 +244,11 @@ def validate_input():
     commands = ["update", "list", "delete", "stats", "plot"]
 
     if len(args) == 0:
-        help("No command given\n")
+        error("No command given")
     if args[0] in ["help", "usage"]:
         help()
     if args[0] not in commands:
-        help("Invalid command: '" + args[0] + "'\n")
+        error("Invalid command: '" + args[0] + "'")
 
     handle_command(args)
     
