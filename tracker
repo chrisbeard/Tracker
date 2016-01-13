@@ -275,7 +275,7 @@ def validate_input():
     commands = ["update", "list", "delete", "stats", "plot"]
 
     if len(args) == 0:
-        error("No command given")
+        help()
     if args[0] in ["help", "usage"]:
         help()
     if args[0] not in commands:
