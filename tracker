@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 
 from datetime import datetime
+import os
 import sys
 import sqlite3
 import subprocess
 
 # Data stored in sqlite so it can be shared easily
-tracker_db = sqlite3.connect('tracker_data.db')
+db_file = os.path.expanduser("~") + "/.tracker_data.db"
+tracker_db = sqlite3.connect(db_file)
 db = tracker_db.cursor()
 db.execute('''CREATE TABLE IF NOT EXISTS trackers
                 (name text, day date, value real)''')
