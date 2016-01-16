@@ -199,9 +199,10 @@ def display_stats(trackers):
             cursor = db.execute(query, {"tracker": t})
             results = cursor.fetchall()
             num_entries = len(results)
-            print(t + ": " + str(num_entries) + " entries")
-            counts = [0,0,0,0,0,0,0]
-            tally = [0,0,0,0,0,0,0]
+            counts = [0] * len(days)
+            tally = [0] * len(days)
+            mins = [None] * len(days)
+            maxs = [None] * len(days)
             min_value = None
             max_value = None
             for r in results:
@@ -214,28 +215,44 @@ def display_stats(trackers):
                     min_value = count
                 if not max_value or max_value < count:
                     max_value = count
+                if not mins[day_index] or count < mins[day_index]:
+                    mins[day_index] = count
+                if not maxs[day_index] or count > maxs[day_index]:
+                    maxs[day_index] = count
 
-            point = "  {:3} -- {}"
+            # format string for single data point
+            point = "  {:3} -- {:,.3f}"
 
-            print(point.format("total", sum(counts)))
-            print(point.format("average", sum(counts)/sum(tally)))
+            print(t + ": " + str(num_entries) + " entries\n")
+
+            print(point.format("sum", sum(counts)))
+            print(point.format("avg", sum(counts)/sum(tally)))
             print(point.format("min", min_value))
             print(point.format("max", max_value))
 
             print()
 
-            print("  Totals\n  ======")
+            # prepare min/max data for printing
+            mins = [v if v else 0 for v in mins]
+            maxs = [v if v else 0 for v in maxs]
+
+            row = "{:40}{:40}"
+            print(row.format("  Totals", "  Averages", "  Min", "  Max"))
+            print(row.format("  ======", "  ========", "  ===", "  ==="))
             for i in range(-1,6):
-                print(point.format(days[i], str(counts[i])))
+                tot = point.format(days[i], counts[i])
+                avg_value = 0 if tally[i] is 0 else counts[i]/tally[i]
+                avg = point.format(days[i], avg_value)
+                print(row.format(tot, avg))
 
             print()
 
-            print("  Averages\n  ========")
+            print(row.format("  Min", "  Max"))
+            print(row.format("  ===", "  ==="))
             for i in range(-1,6):
-                if (tally[i] is 0):
-                    print(point.format(days[i], 0))
-                else:
-                    print(point.format(days[i], str(counts[i]/tally[i])))
+                min_value = point.format(days[i], mins[i])
+                max_value = point.format(days[i], maxs[i])
+                print(row.format(min_value, max_value))
 
 
 def display_plot(tracker):
