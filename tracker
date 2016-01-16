@@ -89,8 +89,6 @@ def update_tracker(tracker_info):
     # Ensure tracker and data are provided
     if len(tracker_info) == 0:
         error("Must supply tracker and data to update")
-    elif len(tracker_info) == 1:
-        error("Must supply data to update '" + tracker_info[0] + "'")
     elif len(tracker_info) > 2:
         error("Too many arguments given for update command")
 
@@ -98,23 +96,40 @@ def update_tracker(tracker_info):
     tracker = tracker_info[0]
     if not tracker_exists(tracker):
         print("Tracker '" + tracker + "' not found")
-        confirm = input("Type '" + tracker + "' to confirm creation: ").strip()
+        confirm = input("Confirm '" + tracker + "' to create: ").strip()
         if confirm != tracker:
             error("Update failed")
 
+    if len(tracker_info) == 1:
+        date = None
+        while not date:
+            date = input("Provide date YYYY-MM-DD (leave blank for today): ").strip()
+            if not date:
+                date = datetime.today().date()
+                break
+            try:
+                date = datetime.strptime(date, "%Y-%m-%d").date()
+            except ValueError:
+                print("Error: Invalid date provided")
+                date = None
+        data = input("Value: ").strip()
+    else:
+        data = tracker_info[1]
+        date = datetime.today().date()
+
     # Ensure data is a number
     try:
-        data = float(tracker_info[1])
+        data = float(data)
     except ValueError:
-        error("'" + tracker_info[1] + "' is not numerical, update failed")
+        error("'" + data + "' is not numerical, update failed")
     # Update existing row for today's value if possible
     db.execute('''UPDATE trackers SET value = value + :data
-                    WHERE name = :tracker AND day=date('now', 'localtime')''',
-                    {"data": data, "tracker": tracker})
+                    WHERE name = :tracker AND day = :date''',
+                    {"data": data, "tracker": tracker, "date": date})
     # Otherwise, insert a new row
     if not db.rowcount:
-        db.execute("INSERT INTO trackers VALUES (?, date('now', 'localtime'), ?)",
-                (tracker, data))
+        db.execute("INSERT INTO trackers VALUES (?, ?, ?)",
+                (tracker, date, data))
     tracker_db.commit()
     print("'" + tracker + "' updated")
 
