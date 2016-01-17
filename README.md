@@ -18,6 +18,7 @@ $ tracker **update** pushups 10
 Tracker 'pushups' not found
 Confirm 'pushups' to create: pushups
 'pushups' updated
+$
 ```
 
 ####Show existing trackers
@@ -27,6 +28,7 @@ $ tracker **list**
 Current Trackers:
 	pushups
 	naps
+$
 ```
 
 ####Update a tracker for today
@@ -34,6 +36,7 @@ Current Trackers:
 ```
 $ tracker **update** pushups 25
 'pushups' updated
+$
 ```
 Note: If the tracker already has data for today, it will *add* the value given to the existing value.
 
@@ -44,13 +47,16 @@ $ tracker **update** pushups
 Provide date YYYY-MM-DD (leave blank for today): 2016-01-01
 Value: 50
 'pushups' updated
+$
 ```
 Note: If the tracker already has data for the given day, it will *add* the value given to the existing value.
 
 ####Remove a tracker
 ```
 $ tracker **delete** pushups
-Type 'puhsups' to confirm:
+Type 'puhsups' to confirm: pushups
+Tracker named 'pushups' deleted
+$
 ```
 Note: Deletion is permanent and cannot be undone!
 
