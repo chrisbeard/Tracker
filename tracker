@@ -211,10 +211,10 @@ def display_stats(trackers):
                 day_index = day.weekday()
                 counts[day_index] += count
                 tally[day_index] += 1
-                if not min_value or min_value > count:
-                    min_value = count
-                if not max_value or max_value < count:
-                    max_value = count
+                if not min_value or min_value[0] > count:
+                    min_value = (count, day)
+                if not max_value or max_value[0] < count:
+                    max_value = (count, day)
                 if not mins[day_index] or count < mins[day_index]:
                     mins[day_index] = count
                 if not maxs[day_index] or count > maxs[day_index]:
@@ -225,10 +225,13 @@ def display_stats(trackers):
 
             print(t + ": " + str(num_entries) + " entries\n")
 
+            # TODO: decide how to format output for better readability
             print(point.format("sum", sum(counts)))
             print(point.format("avg", sum(counts)/sum(tally)))
-            print(point.format("min", min_value))
-            print(point.format("max", max_value))
+            print(point.format("min", min_value[0]) +
+                    " (" + str(min_value[1]) + ")")
+            print(point.format("min", min_value[0]) +
+                    " (" + str(min_value[1]) + ")")
 
             print()
 
