@@ -276,28 +276,29 @@ def display_plot(tracker):
         dates = [r[1] for r in results]
         values = [v[2] for v in results]
 
-        gnuplot = subprocess.Popen(["/usr/bin/gnuplot"], stdin=subprocess.PIPE)
+        minY = min(values) * 0.75
+        maxY = max(values) * 1.1
 
-        # give graph a size and title
-        gnuplot.stdin.write("set term dumb 79 25\n".encode('utf-8'))
-        gnuplot.stdin.write("set title '{}'\n".format(tracker).encode('utf-8'))
+        data = [
+            # give graph a size and title
+            "set term dumb 79 25\n",
+            "set title '{}'\n".format(tracker),
 
-        # set date format for gnuplot
-        gnuplot.stdin.write("set xdata time\n".encode('utf-8'))
-        gnuplot.stdin.write('set timefmt "%Y-%m-%d\n'.encode('utf-8'))
+            # set date format for gnuplot
+            "set xdata time\n",
+            'set timefmt "%Y-%m-%d\n',
 
-        # lazy scaling, won't work nicely for all data ranges
-        m = min(values) * .75
-        mm = max(values) * 1.1
-        gnuplot.stdin.write('set yrange[{}:{}]\n'.format(m, mm).encode('utf-8'))
+            # lazy scaling, won't work nicely for all data ranges
+            'set yrange[{}:{}]\n'.format(minY, maxY),
 
+            "plot '-' using 1:2 title '{}' with impulses\n".format(tracker)
+        ]
         # plot data
-        gnuplot.stdin.write("plot '-' using 1:2 title '{}' with impulses\n".format(tracker).encode('utf-8'))
-        for d,v in zip(dates, values):
-            s = "%s %f\n" % (d,v)
-            gnuplot.stdin.write(s.encode('utf-8'))
-        gnuplot.stdin.write("exit\n".encode('utf-8'))
-        gnuplot.stdin.flush()
+        data.extend(["%s %f" % (d, v) for d, v in zip(dates, values)])
+        data.append("exit")
+
+        gnuplot = subprocess.Popen(["/usr/bin/gnuplot"], stdin=subprocess.PIPE)
+        gnuplot.communicate("\n".join(data).encode("utf-8"))
 
 
 def handle_command(args):
