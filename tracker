@@ -20,27 +20,53 @@ def error(message = None):
         print(message)
     exit(1)
 
-def help():
+def help(command = None):
     """Display usage information, exit program.
     """
-    option = "  {:16} {}"
-    help_text = [
-        "Usage: tracker COMMAND [TRACKER_NAME] [ARGS]",
-        "",
-        "Commands:",
-        option.format("help", "display this dialog"),
-        option.format("update", "save new data to tracker"),
-        option.format("list", "list available trackers"),
-        option.format("show", "display data for tracker"),
-        option.format("delete", "remove tracker"),
-        option.format("stats", "general statistics"),
-        option.format("plot", "graphical representation"),
-        "",
-        option.format("Tracker Name", "title of data to track"),
-        "",
-        option.format("Args", "value to add to specified tracker"),
-    ]
-    print("\n".join(help_text))
+    if command is None:
+        option = "   {:12} {}"
+        help_text = [
+            "Usage: tracker <command> [<args>]",
+            "",
+            "Available commands:",
+            option.format("help",   "display this dialog"),
+            option.format("update", "save data to tracker"),
+            option.format("list",   "list available trackers"),
+            option.format("show",   "display raw tracker data"),
+            option.format("delete", "remove tracker"),
+            option.format("stats",  "show statistics"),
+            option.format("plot",   "show graph"),
+            "",
+            "Use 'tracker help <command>' for a command's detailed usage."
+        ]
+        print("\n".join(help_text))
+    #TODO: display help for all commands
+    #TODO: figure out how to format these nicely
+    else:
+        # commands = ["update", "list", "show", "delete", "stats", "plot"]
+        usage = "   {}"
+        desc  = "      {}"
+        if command == "update":
+            help_text = [
+                "Update: command which adds (numerical) data to a tracker",
+                "",
+                "Usage:",
+                usage.format("update <tracker> <data>"),
+                usage.format("update <tracker>"),
+                "",
+                "Descriptions",
+                usage.format("update <tracker> <data>"),
+                desc.format("This form is shorthand for saving <data> to " +
+                    "<tracker> for today's date."),
+                "",
+                usage.format("update <tracker>"),
+                desc.format("This form is used to set the value for an " +
+                    "arbitrary date for <tracker>."),
+                desc.format("The date must be in the format YYYY-MM-DD.")
+            ]
+        else:
+            error("Invalid command: '{}'".format(command))
+        print("\n".join(help_text))
     sys.exit(1)
 
 
@@ -154,7 +180,7 @@ def delete_tracker(tracker):
     """
     # Ensure tracker is provided
     if len(tracker) != 1:
-        error("Must supply tracker name to delete")
+        error("Must supply tracker to delete")
     tracker = tracker[0]
     if not tracker_exists(tracker):
         error("Cannot delete unknown tracker '" + tracker + "'")
@@ -164,7 +190,7 @@ def delete_tracker(tracker):
     if confirm == tracker:
         db.execute("DELETE FROM trackers WHERE name=:tracker", {"tracker": tracker})
         tracker_db.commit()
-        print("Tracker named '" + tracker + "' deleted")
+        print("Tracker '" + tracker + "' deleted")
     else:
         print("Deletion cancelled")
 
@@ -334,9 +360,14 @@ def validate_input():
     if len(args) == 0:
         help()
     if args[0] in ["help", "usage"]:
-        help()
+        if len(args) > 2:
+            error("Too many args provided for 'help'")
+        elif len(args) == 2:
+            help(args[1])
+        else:
+            help()
     if args[0] not in commands:
-        error("Invalid command: '" + args[0] + "'")
+        error("Invalid command: '{}'".format(args[0]))
 
     handle_command(args)
     
