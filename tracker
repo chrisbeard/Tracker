@@ -48,21 +48,48 @@ def help(command = None):
         desc  = "      {}"
         if command == "update":
             help_text = [
-                "Update: command which adds (numerical) data to a tracker",
+                "Update: command which adds (numerical) data to a tracker.",
                 "",
                 "Usage:",
-                usage.format("update <tracker> <data>"),
-                usage.format("update <tracker>"),
+                usage.format("tracker update <tracker> <data>"),
+                usage.format("tracker update <tracker>"),
                 "",
-                "Descriptions",
-                usage.format("update <tracker> <data>"),
+                "Description:",
+                usage.format("tracker update <tracker> <data>"),
                 desc.format("This form is shorthand for saving <data> to " +
                     "<tracker> for today's date."),
                 "",
-                usage.format("update <tracker>"),
+                usage.format("tracker update <tracker>"),
                 desc.format("This form is used to set the value for an " +
                     "arbitrary date for <tracker>."),
-                desc.format("The date must be in the format YYYY-MM-DD.")
+                desc.format("The date must be in the format YYYY-MM-DD."),
+                "",
+                "Options:",
+                usage.format("<tracker>"),
+                desc.format("The name of the tracker to update, converted to lowercase."),
+                desc.format("If <tracker> does not exist, you will be prompted to create it."),
+                "",
+                usage.format("<data>"),
+                desc.format("The value to save to the tracker to update, must be numerical.")
+            ]
+        elif command == "list":
+            help_text = [
+                "List: displays a list of trackers which have been created",
+                "",
+                "Usage:",
+                usage.format("tracker list")
+            ]
+        elif command == "show":
+            help_text = [
+                "Show: displays raw dates and values for a tracker",
+                "",
+                "Usage:",
+                usage.format("tracker show <tracker>"),
+                "",
+                "Description:",
+                usage.format("tracker show <tracker>"),
+                desc.format("Displays all data for <tracker> in the form '<date> | <value>'."),
+                desc.format("Note: <date> is formatted as 'YYYY-MM-DD'.")
             ]
         else:
             error("Invalid command: '{}'".format(command))
