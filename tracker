@@ -89,7 +89,62 @@ def help(command = None):
                 "Description:",
                 usage.format("tracker show <tracker>"),
                 desc.format("Displays all data for <tracker> in the form '<date> | <value>'."),
-                desc.format("Note: <date> is formatted as 'YYYY-MM-DD'.")
+                desc.format("Note: <date> is formatted as 'YYYY-MM-DD'."),
+                "",
+                "Options:",
+                usage.format("<tracker>"),
+                desc.format("The name of the tracker to show, converted to lowercase."),
+            ]
+        elif command == "delete":
+            help_text = [
+                "Delete: permanently removes all data entries for a given tracker",
+                "",
+                "Usage:",
+                usage.format("tracker delete <tracker>"),
+                "",
+                "Description:",
+                usage.format("tracker delete <tracker>"),
+                desc.format("All sqlite entries associated with <tracker> are deleted."),
+                "",
+                "Options:",
+                usage.format("<tracker>"),
+                desc.format("The name of the tracker to delete, converted to lowercase.")
+            ]
+        elif command == "stats":
+            help_text = [
+                "Stats: show statistics for tracker(s)",
+                "",
+                "Usage:",
+                usage.format("tracker stats <tracker>"),
+                usage.format("tracker stats"),
+                "",
+                "Description:",
+                usage.format("tracker stats <tracker>"),
+                desc.format("Display information for each weekday and entire time period."),
+                desc.format("Stats included: total, mean, min, max."),
+                "",
+                usage.format("tracker stats"),
+                desc.format("Displays information about all trackers."),
+                desc.format("Stats included: total entries, entries per tracker."),
+                "",
+                "Options:",
+                usage.format("<tracker>"),
+                desc.format("The name of the tracker to show stats for, converted to lowercase.")
+            ]
+        elif command == "plot":
+            help_text = [
+                "Plot: show graph for tracker",
+                "",
+                "Usage:",
+                usage.format("tracker plot <tracker>"),
+                "",
+                "Description:",
+                usage.format("tracker stats <tracker>"),
+                desc.format("Displays graph for <tracker> from first entry to last entry."),
+                "",
+                "Options:",
+                usage.format("<tracker>"),
+                desc.format("The name of the tracker to graph, converted to lowercase.")
             ]
         else:
             error("Invalid command: '{}'".format(command))
