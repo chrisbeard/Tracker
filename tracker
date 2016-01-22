@@ -338,8 +338,8 @@ def display_stats(trackers):
             print(point.format("avg", sum(counts)/sum(tally)))
             print(point.format("min", min_value[0]) +
                     " (" + str(min_value[1]) + ")")
-            print(point.format("min", min_value[0]) +
-                    " (" + str(min_value[1]) + ")")
+            print(point.format("max", max_value[0]) +
+                    " (" + str(max_value[1]) + ")")
 
             print()
 
