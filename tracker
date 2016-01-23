@@ -171,6 +171,24 @@ def tracker_exists(tracker, trackers = None):
     return tracker in trackers
 
 
+def fetch_all(tracker = None):
+    """Returns all data entries for the given tracker
+
+    Input:
+        tracker: name of tracker to return data for
+    Output:
+        List of entries for tracker. If no tracker, returns all entries
+    """
+    if tracker:
+        query = "SELECT * FROM TRACKERS where name=:tracker"
+        cursor = db.execute(query, {"tracker": tracker})
+        return cursor.fetchall()
+    else:
+        query = "SELECT * FROM TRACKERS"
+        cursor = db.execute(query)
+        return cursor.fetchall()
+
+
 def show_tracker(tracker_info):
     """Show data for list of trackers
 
@@ -181,9 +199,10 @@ def show_tracker(tracker_info):
     for t in tracker_info:
         if not tracker_exists(t):
             error("Cannot show data for unknown tracker '" + t + "'")
-        query = "SELECT * FROM TRACKERS where name=:tracker"
-        cursor = db.execute(query, {"tracker": t})
-        results = cursor.fetchall()
+        # query = "SELECT * FROM TRACKERS where name=:tracker"
+        # cursor = db.execute(query, {"tracker": t})
+        # results = cursor.fetchall()
+        results = fetch_all(t)
         for r in results:
             print(entry.format(r[1], r[2]))
 
@@ -287,25 +306,20 @@ def display_stats(trackers):
         # number of trackers, number of elements in each tracker
         trackers = tracker_list()
         print(str(len(trackers)) + " tracker(s)")
-        cursor = db.execute("SELECT * FROM trackers")
-        entries = cursor.fetchall()
+        entries = fetch_all()
         print(str(len(entries)) + " total entries")
 
         for t in trackers:
             print()
             print(t)
-            t_cursor = db.execute("SELECT * FROM trackers WHERE name=:name",
-                    {'name': t})
-            t_entries = cursor.fetchall()
+            t_entries = fetch_all(t)
             print("  " + str(len(t_entries)) + " entries")
     else:
         days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         for t in trackers:
             if not tracker_exists(t):
                 error("Cannot show stats for unknown tracker '" + t + "'")
-            query = "SELECT * FROM TRACKERS where name=:tracker"
-            cursor = db.execute(query, {"tracker": t})
-            results = cursor.fetchall()
+            results = fetch_all(t)
             num_entries = len(results)
             counts = [0] * len(days)
             tally = [0] * len(days)
@@ -379,6 +393,7 @@ def display_plot(tracker):
         if not tracker_exists(tracker):
             error("Cannot show stats for unknown tracker '" + tracker + "'")
 
+        # TODO: is is possible for the entries to be unorded?
         query = "SELECT * FROM TRACKERS where name=:tracker ORDER BY day ASC"
         cursor = db.execute(query, {"tracker": tracker})
         results = cursor.fetchall()
