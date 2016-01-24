@@ -33,6 +33,7 @@ def help(command = None):
             option.format("update", "save data to tracker"),
             option.format("list",   "list available trackers"),
             option.format("show",   "display raw tracker data"),
+            option.format("rename", "rename tracker"),
             option.format("delete", "remove tracker"),
             option.format("stats",  "show statistics"),
             option.format("plot",   "show graph"),
@@ -43,7 +44,7 @@ def help(command = None):
     #TODO: display help for all commands
     #TODO: figure out how to format these nicely
     else:
-        # commands = ["update", "list", "show", "delete", "stats", "plot"]
+        # commands = ["update", "list", "show", "rename", "delete", "stats", "plot"]
         usage = "   {}"
         desc  = "      {}"
         if command == "update":
@@ -205,6 +206,28 @@ def show_tracker(tracker_info):
         results = fetch_all(t)
         for r in results:
             print(entry.format(r[1], r[2]))
+
+def rename_tracker(tracker_info):
+    """Rename the given tracker
+
+    Input:
+        tracker_info: list in the form [tracker, new_tracker]
+    """
+    if len(tracker_info) == 0:
+        error("Must supply tracker to rename")
+    elif len(tracker_info) != 2:
+        error("Must suppply tracker and new tracker name")
+    tracker = tracker_info[0]
+    new_tracker = tracker_info[1]
+    if not tracker_exists(tracker):
+        error("Tracker '" + tracker + "' not found")
+    if tracker_exists(new_tracker):
+        error("Tracker '" + new_tracker + "' already exists")
+    db.execute('''UPDATE trackers SET name = :new_name
+                    WHERE name = :tracker''',
+                    {"new_name": new_tracker, "tracker": tracker})
+    tracker_db.commit()
+    print("'" + tracker + "' renamed to '" + new_tracker + "'")
 
 
 def update_tracker(tracker_info):
@@ -438,6 +461,7 @@ def handle_command(args):
         "update" : update_tracker,
         "list"   : display_list,
         "show"   : show_tracker,
+        "rename" : rename_tracker,
         "delete" : delete_tracker,
         "stats"  : display_stats,
         "plot"   : display_plot
@@ -452,7 +476,7 @@ def validate_input():
 
     # available commands
     # TODO consider consolidating with help(), handle_command
-    commands = ["update", "list", "show", "delete", "stats", "plot"]
+    commands = ["update", "list", "show", "rename", "delete", "stats", "plot"]
 
     if len(args) == 0:
         help()
