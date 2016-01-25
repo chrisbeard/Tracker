@@ -96,6 +96,24 @@ def help(command = None):
                 usage.format("<tracker>"),
                 desc.format("The name of the tracker to show, converted to lowercase."),
             ]
+        elif command == "rename":
+            help_text = [
+                "Rename: change name of a tracker",
+                "",
+                "Usage:",
+                usage.format("tracker rename <tracker> <new_tracker>"),
+                "",
+                "Description:",
+                usage.format("tracker rename <tracker> <new_tracker>"),
+                desc.format("All <tracker> entries will not be <new_tracker> entries."),
+                "",
+                "Options:",
+                usage.format("<tracker>"),
+                desc.format("The name of the existing tracker to change, converted to lowercase."),
+                "",
+                usage.format("<new_tracker>"),
+                desc.format("The name of the new tracker (must not already exist), converted to lowercase.")
+            ]
         elif command == "delete":
             help_text = [
                 "Delete: permanently removes all data entries for a given tracker",
