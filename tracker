@@ -470,8 +470,34 @@ def display_plot(tracker):
 def handle_command(args):
     """Handles execution of valid commands
     """
+
+
+def handle_commands(args_in):
+    """Ensures user input contains valid commands
+
+    Input:
+        args:
+    """
+    args = [arg.lower() for arg in args_in]
+
+    # available commands
+    # TODO consider consolidating with help(), handle_command
+    commands = ["update", "list", "show", "rename", "delete", "stats", "plot"]
+
+    if len(args) == 0:
+        help()
+
     command = args[0]
-    # TODO handle all possible commands
+    if command in ["help", "usage"]:
+        if len(args) > 2:
+            error("Too many args provided for 'help'")
+        elif len(args) == 2:
+            help(args[1])
+        else:
+            help()
+    if command not in commands:
+        error("Invalid command: '{}'".format(args[0]))
+
     # Map to command's handler function
     # Remaining args are passed regardless, dealt with in handler
     handlers = {
@@ -484,31 +510,7 @@ def handle_command(args):
         "plot"   : display_plot
     }
     handlers[command](args[1:])
-
-
-def validate_input():
-    """Ensures user input contains valid commands
-    """
-    args = [arg.lower() for arg in sys.argv[1:]]
-
-    # available commands
-    # TODO consider consolidating with help(), handle_command
-    commands = ["update", "list", "show", "rename", "delete", "stats", "plot"]
-
-    if len(args) == 0:
-        help()
-    if args[0] in ["help", "usage"]:
-        if len(args) > 2:
-            error("Too many args provided for 'help'")
-        elif len(args) == 2:
-            help(args[1])
-        else:
-            help()
-    if args[0] not in commands:
-        error("Invalid command: '{}'".format(args[0]))
-
-    handle_command(args)
     
 
 if __name__ == '__main__':
-    validate_input()
+    handle_commands(sys.argv[1:])
