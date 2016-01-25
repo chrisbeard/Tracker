@@ -196,13 +196,12 @@ def show_tracker(tracker_info):
     Input:
         tracker_info: list in the form [tracker, ...]
     """
+    if not tracker_info:
+        error("Must provide tracker to show")
     entry = "{} | {}"
     for t in tracker_info:
         if not tracker_exists(t):
             error("Cannot show data for unknown tracker '" + t + "'")
-        # query = "SELECT * FROM TRACKERS where name=:tracker"
-        # cursor = db.execute(query, {"tracker": t})
-        # results = cursor.fetchall()
         results = fetch_all(t)
         for r in results:
             print(entry.format(r[1], r[2]))
