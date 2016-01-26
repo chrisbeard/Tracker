@@ -463,13 +463,8 @@ def display_plot(tracker):
         data.extend(["%s %f" % (d, v) for d, v in zip(dates, values)])
         data.append("exit")
 
-        gnuplot = subprocess.Popen(["/usr/bin/gnuplot"], stdin=subprocess.PIPE)
+        gnuplot = subprocess.Popen(["gnuplot"], stdin=subprocess.PIPE)
         gnuplot.communicate("\n".join(data).encode("utf-8"))
-
-
-def handle_command(args):
-    """Handles execution of valid commands
-    """
 
 
 def handle_commands(args_in):
@@ -481,7 +476,7 @@ def handle_commands(args_in):
     args = [arg.lower() for arg in args_in]
 
     # available commands
-    # TODO consider consolidating with help(), handle_command
+    # TODO consider consolidating with help()
     commands = ["update", "list", "show", "rename", "delete", "stats", "plot"]
 
     if len(args) == 0:
