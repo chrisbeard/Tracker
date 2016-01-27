@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from datetime import datetime
+import math
 import os
 import sys
 import sqlite3
@@ -336,6 +337,51 @@ def delete_tracker(tracker):
         print("Deletion cancelled")
 
 
+def correlation(x, y):
+    """Find correlation coefficient for two sets of data
+
+    Input:
+        x: list of tuples in the form [(date, value), ...]
+        y: list of tuples in the form [(date, value), ...]
+    Output:
+        r: correlation coefficient
+        error: data has no variance
+    """
+    # Use data in natural key-value form
+    xs = {}
+    for (_, date, value) in x:
+        xs[date] = value
+    ys = {}
+    for (_, date, value) in y:
+        ys[date] = value
+
+    # Fill 0s for missing dates
+    for d in set(ys.keys()) - set(xs.keys()):
+        xs[d] = 0
+    for d in set(xs.keys()) - set(ys.keys()):
+        ys[d] = 0
+
+    x_avg = sum(xs.values()) / len(xs.values())
+    y_avg = sum(ys.values()) / len(ys.values())
+
+    # Pearson correlation coefficient for given sample
+    covariance = 0
+    x_variance = 0
+    y_variance = 0
+    for d in xs.keys():
+        x_diff = xs[d] - x_avg
+        y_diff = ys[d] - y_avg
+        covariance += x_diff * y_diff
+        x_variance += math.pow(x_diff, 2)
+        y_variance += math.pow(y_diff, 2)
+    print(x_variance, y_variance)
+    if x_variance == 0:
+        return -1
+    elif y_variance == 0:
+        return -2
+    return covariance / (math.sqrt(x_variance) * math.sqrt(y_variance))
+
+
 def display_stats(trackers):
     """Show stats for trackers
 
@@ -354,6 +400,19 @@ def display_stats(trackers):
             print(t)
             t_entries = fetch_all(t)
             print("  " + str(len(t_entries)) + " entries")
+    elif len(trackers) == 2:
+        t1 = trackers[0]
+        t2 = trackers[1]
+        if not tracker_exists(t1):
+            error("Cannot show stats for unknown tracker '" + t1 + "'")
+        if not tracker_exists(t2):
+            error("Cannot show stats for unknown tracker '" + t2 + "'")
+        r = correlation(fetch_all(t1), fetch_all(t2))
+        if r == -1:
+            error("Error: '{}' data has no variance".format(t1))
+        elif r == -2:
+            error("Error: '{}' data has no variance".format(t2))
+        print("Correlation coefficient: {}".format(r))
     else:
         days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         for t in trackers:
