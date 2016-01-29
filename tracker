@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import math
 import os
 import sys
@@ -174,6 +174,18 @@ def help(command = None):
             error("Invalid command: '{}'".format(command))
         print("\n".join(help_text))
     sys.exit(1)
+
+
+def str_to_date(date_string, fmt="%Y-%m-%d"):
+    """Converts string in given format to date
+
+    Input:
+        date_string: string representing a date
+        fmt: format string for date (optional)
+    Output:
+        date: datetime.date() object corresponding to date_string
+    """
+    return datetime.strptime(date_string, fmt).date()
 
 
 def tracker_list():
@@ -432,7 +444,7 @@ def display_stats(trackers):
             max_value = None
             for r in results:
                 count = r[2]
-                day = datetime.strptime(r[1], "%Y-%m-%d").date()
+                day = str_to_date(r[1])
                 day_index = day.weekday()
                 counts[day_index] += count
                 tally[day_index] += 1
@@ -508,6 +520,9 @@ def display_plot(tracker):
         minY = min(values) * 0.75
         maxY = max(values) * 1.1
 
+        minX = str_to_date(min(dates)) + timedelta(days=-1)
+        maxX = str_to_date(max(dates)) + timedelta(days=1)
+
         data = [
             # give graph a size and title
             "set term dumb 79 25\n",
@@ -519,6 +534,7 @@ def display_plot(tracker):
 
             # lazy scaling, won't work nicely for all data ranges
             'set yrange[{}:{}]\n'.format(minY, maxY),
+            'set xrange["{}":"{}"]\n'.format(minX, maxX),
 
             "plot '-' using 1:2 title '{}' with impulses\n".format(tracker)
         ]
