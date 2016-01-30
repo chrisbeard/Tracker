@@ -241,6 +241,7 @@ def show_tracker(tracker_info):
         for r in results:
             print(entry.format(r[1], r[2]))
 
+
 def rename_tracker(tracker_info):
     """Rename the given tracker
 
@@ -390,7 +391,6 @@ def correlation(x, y):
         covariance += x_diff * y_diff
         x_variance += math.pow(x_diff, 2)
         y_variance += math.pow(y_diff, 2)
-    print(x_variance, y_variance)
     if x_variance == 0:
         return -1
     elif y_variance == 0:
@@ -407,15 +407,15 @@ def display_stats(trackers):
     if len(trackers) == 0:
         # number of trackers, number of elements in each tracker
         trackers = tracker_list()
-        print(str(len(trackers)) + " tracker(s)")
+        print("{} tracker(s)".format(len(trackers)))
         entries = fetch_all()
-        print(str(len(entries)) + " total entries")
+        print("{} total entries".format(len(entries)))
 
         for t in trackers:
             print()
             print(t)
             t_entries = fetch_all(t)
-            print("  " + str(len(t_entries)) + " entries")
+            print("  {} entries".format(len(t_entries)))
     elif len(trackers) == 2:
         t1 = trackers[0]
         t2 = trackers[1]
@@ -460,7 +460,7 @@ def display_stats(trackers):
             # format string for single data point
             point = "  {:3} -- {:,.3f}"
 
-            print(t + ": " + str(num_entries) + " entries\n")
+            print("{}: {} entries\n".format(t, num_entries))
 
             # TODO: decide how to format output for better readability
             print(point.format("sum", sum(counts)))
