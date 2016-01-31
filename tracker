@@ -458,16 +458,22 @@ def display_stats(trackers):
                     maxs[day_index] = count
 
             # format string for single data point
-            point = "  {:3} -- {:,.3f}"
+            point = "  {:3} -- {}"
 
             print("{}: {} entries\n".format(t, num_entries))
 
             # TODO: decide how to format output for better readability
-            print(point.format("sum", sum(counts)))
-            print(point.format("avg", sum(counts)/sum(tally)))
-            print(point.format("min", min_value[0]) +
+            total = sum(counts)
+            avg = total/sum(tally)
+            gen = [total, avg, min_value[0], max_value[0]]
+            gen = ['{:,.3f}'.format(v) for v in gen]
+            gen_len = len(max(gen, key=len))
+
+            print(point.format("sum", gen[0].rjust(gen_len)))
+            print(point.format("avg", gen[1].rjust(gen_len)))
+            print(point.format("min", gen[2].rjust(gen_len)) +
                     " (" + str(min_value[1]) + ")")
-            print(point.format("max", max_value[0]) +
+            print(point.format("max", gen[3].rjust(gen_len)) +
                     " (" + str(max_value[1]) + ")")
 
             print()
@@ -476,23 +482,13 @@ def display_stats(trackers):
             mins = [v if v else 0 for v in mins]
             maxs = [v if v else 0 for v in maxs]
 
-            row = "{:40}{:40}"
-            print(row.format("  Totals", "  Averages", "  Min", "  Max"))
-            print(row.format("  ======", "  ========", "  ===", "  ==="))
+            title_row = "{:8}{:27}{:27}{:27}{:27}"
+            row = "{:8}{:<27,.3f}{:<27,.3f}{:<27,.3f}{:<27,.3f}"
+            print(title_row.format("", "Totals", "Averages", "Min", "Max"))
+            print(title_row.format("", "======", "========", "===", "==="))
             for i in range(-1,6):
-                tot = point.format(days[i], counts[i])
                 avg_value = 0 if tally[i] is 0 else counts[i]/tally[i]
-                avg = point.format(days[i], avg_value)
-                print(row.format(tot, avg))
-
-            print()
-
-            print(row.format("  Min", "  Max"))
-            print(row.format("  ===", "  ==="))
-            for i in range(-1,6):
-                min_value = point.format(days[i], mins[i])
-                max_value = point.format(days[i], maxs[i])
-                print(row.format(min_value, max_value))
+                print(row.format(days[i] + " --", counts[i], avg_value, mins[i], maxs[i]))
 
 
 def display_plot(tracker):
