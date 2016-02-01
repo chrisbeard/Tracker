@@ -499,7 +499,7 @@ def display_stats(trackers):
             maxs_str = ['{:,.3f}'.format(v) for v in maxs]
             maxs_len = len(max(maxs_str, key=len))
 
-            title_row = "{:8}{:27}{:27}{:27}{:27}"
+            title_row = '\033[1m' + "{:8}{:27}{:27}{:27}{:27}" + '\033[0m'
             row = "{:8}{:<27}{:<27}{:<27}{:<27}"
             print(title_row.format(
                 "",
