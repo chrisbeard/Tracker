@@ -482,13 +482,38 @@ def display_stats(trackers):
             mins = [v if v else 0 for v in mins]
             maxs = [v if v else 0 for v in maxs]
 
-            title_row = "{:8}{:27}{:27}{:27}{:27}"
-            row = "{:8}{:<27,.3f}{:<27,.3f}{:<27,.3f}{:<27,.3f}"
-            print(title_row.format("", "Totals", "Averages", "Min", "Max"))
-            print(title_row.format("", "======", "========", "===", "==="))
+
+            # TODO: this logic is really sloppy, should be cleaned up
+            counts_str = ['{:,.3f}'.format(v) for v in counts]
+            count_len = len(max(counts_str, key=len))
+
+            avgs = [None] * len(counts)
             for i in range(-1,6):
-                avg_value = 0 if tally[i] is 0 else counts[i]/tally[i]
-                print(row.format(days[i] + " --", counts[i], avg_value, mins[i], maxs[i]))
+                avgs[i] = 0 if tally[i] is 0 else counts[i]/tally[i]
+            avgs_str = ['{:,.3f}'.format(v) for v in avgs]
+            avgs_len = len(max(avgs_str, key=len))
+
+            mins_str = ['{:,.3f}'.format(v) for v in mins]
+            mins_len = len(max(mins_str, key=len))
+
+            maxs_str = ['{:,.3f}'.format(v) for v in maxs]
+            maxs_len = len(max(maxs_str, key=len))
+
+            title_row = "{:8}{:27}{:27}{:27}{:27}"
+            row = "{:8}{:<27}{:<27}{:<27}{:<27}"
+            print(title_row.format(
+                "",
+                "Total".rjust(count_len),
+                "Avg".rjust(avgs_len),
+                "Min".rjust(mins_len),
+                "Max".rjust(maxs_len)))
+
+            for i in range(-1,6):
+                print(row.format(days[i] + " --",
+                    counts_str[i].rjust(count_len),
+                    avgs_str[i].rjust(avgs_len),
+                    mins_str[i].rjust(mins_len),
+                    maxs_str[i].rjust(maxs_len)))
 
 
 def display_plot(tracker):
