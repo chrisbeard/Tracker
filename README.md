@@ -51,6 +51,15 @@ $
 ```
 Note: If the tracker already has data for the given day, it will *add* the value given to the existing value.
 
+####Show raw data for a tracker
+```
+$ tracker show pushups
+2016-01-05 | 10.0
+2016-01-06 | 50.0
+2016-01-07 | 25.0
+$
+```
+
 ####Delete a tracker
 ```
 $ tracker delete pushups
@@ -72,5 +81,34 @@ pushups
 
 naps
   9 entries
+$
+```
+
+####Show detailed tracker stats
+```
+$ tracker stats pushups
+pushups: 12 entries
+
+  sum -- 315.000
+  avg --  26.250
+  min --  10.000 (2016-01-05)
+  max --  50.000 (2016-01-06)
+
+         Total                        Avg                        Min                        Max
+Sun --  30.000                     30.000                     30.000                     30.000
+Mon --  40.000                     40.000                     40.000                     40.000
+Tue --  10.000                     10.000                     10.000                     10.000
+Wed --  80.000                     40.000                     30.000                     50.000
+Thu --  80.000                     26.667                     25.000                     30.000
+Fri --  10.000                     10.000                     10.000                     10.000
+Sat --  65.000                     21.667                     10.000                     30.000
+$
+```
+
+
+####Show correlation between trackers
+```
+$ tracker stats pushups naps
+Correlation coefficient: -0.7574057028716906
 $
 ```
