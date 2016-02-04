@@ -26,8 +26,8 @@ $
 ```
 $ tracker list
 Current Trackers:
-	pushups
-	naps
+  pushups
+  naps
 $
 ```
 

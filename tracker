@@ -326,7 +326,7 @@ def display_list(args = None):
         print("No trackers found")
     else:
         print("Current Trackers:")
-        tracker_option = "\t{}"
+        tracker_option = "  {}"
         for t in trackers:
             print(tracker_option.format(t))
 
