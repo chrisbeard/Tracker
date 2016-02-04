@@ -398,6 +398,21 @@ def correlation(x, y):
     return covariance / (math.sqrt(x_variance) * math.sqrt(y_variance))
 
 
+def justify_column(column):
+    """Justifies floats based on longest string in column
+
+    Input:
+        column: list of float values
+    Output:
+        column_strings: list of justified, formatted floats as strings
+        justify: amount to justify by to match formatted data
+    """
+    formatted_strings = ['{:,.3f}'.format(v) for v in column]
+    justify = len(max(formatted_strings, key=len))
+    column_strings = [s.rjust(justify) for s in formatted_strings]
+    return (column_strings, justify)
+
+
 def display_stats(trackers):
     """Show stats for trackers
 
@@ -483,24 +498,17 @@ def display_stats(trackers):
             maxs = [v if v else 0 for v in maxs]
 
 
-            # TODO: this logic is really sloppy, should be cleaned up
-            counts_str = ['{:,.3f}'.format(v) for v in counts]
-            count_len = len(max(counts_str, key=len))
-
+            # Format data into justified columns
+            counts_str, count_len = justify_column(counts)
             avgs = [None] * len(counts)
             for i in range(-1,6):
                 avgs[i] = 0 if tally[i] is 0 else counts[i]/tally[i]
-            avgs_str = ['{:,.3f}'.format(v) for v in avgs]
-            avgs_len = len(max(avgs_str, key=len))
+            avgs_str, avgs_len = justify_column(avgs)
+            mins_str, mins_len = justify_column(mins)
+            maxs_str, maxs_len = justify_column(maxs)
 
-            mins_str = ['{:,.3f}'.format(v) for v in mins]
-            mins_len = len(max(mins_str, key=len))
-
-            maxs_str = ['{:,.3f}'.format(v) for v in maxs]
-            maxs_len = len(max(maxs_str, key=len))
-
-            title_row = '\033[1m' + "{:8}{:27}{:27}{:27}{:27}" + '\033[0m'
-            row = "{:8}{:<27}{:<27}{:<27}{:<27}"
+            title_row = '\033[1m' + "  {:8}{:27}{:27}{:27}{:27}" + '\033[0m'
+            row = "  {:8}{:<27}{:<27}{:<27}{:<27}"
             print(title_row.format(
                 "",
                 "Total".rjust(count_len),
@@ -510,10 +518,10 @@ def display_stats(trackers):
 
             for i in range(-1,6):
                 print(row.format(days[i] + " --",
-                    counts_str[i].rjust(count_len),
-                    avgs_str[i].rjust(avgs_len),
-                    mins_str[i].rjust(mins_len),
-                    maxs_str[i].rjust(maxs_len)))
+                    counts_str[i],
+                    avgs_str[i],
+                    mins_str[i],
+                    maxs_str[i]))
 
 
 def display_plot(tracker):
