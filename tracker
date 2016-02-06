@@ -42,8 +42,6 @@ def help(command = None):
             "Use 'tracker help <command>' for a command's detailed usage."
         ]
         print("\n".join(help_text))
-    #TODO: display help for all commands
-    #TODO: figure out how to format these nicely
     else:
         # commands = ["update", "list", "show", "rename", "delete", "stats", "plot"]
         usage = "   {}"
@@ -218,11 +216,10 @@ def fetch_all(tracker = None):
     if tracker:
         query = "SELECT * FROM TRACKERS where name=:tracker"
         cursor = db.execute(query, {"tracker": tracker})
-        return cursor.fetchall()
     else:
         query = "SELECT * FROM TRACKERS"
         cursor = db.execute(query)
-        return cursor.fetchall()
+    return cursor.fetchall()
 
 
 def show_tracker(tracker_info):
@@ -326,7 +323,7 @@ def display_list(args = None):
         print("No trackers found")
     else:
         print("Current Trackers:")
-        tracker_option = "  {}"
+        tracker_option = "   {}"
         for t in trackers:
             print(tracker_option.format(t))
 
@@ -430,7 +427,7 @@ def display_stats(trackers):
             print()
             print(t)
             t_entries = fetch_all(t)
-            print("  {} entries".format(len(t_entries)))
+            print("   {} entries".format(len(t_entries)))
     elif len(trackers) == 2:
         t1 = trackers[0]
         t2 = trackers[1]
@@ -473,7 +470,7 @@ def display_stats(trackers):
                     maxs[day_index] = count
 
             # format string for single data point
-            point = "  {:3} -- {}"
+            point = "   {:3} -- {}"
 
             print("{}: {} entries\n".format(t, num_entries))
 
@@ -507,8 +504,8 @@ def display_stats(trackers):
             mins_str, mins_len = justify_column(mins)
             maxs_str, maxs_len = justify_column(maxs)
 
-            title_row = '\033[1m' + "  {:8}{:27}{:27}{:27}{:27}" + '\033[0m'
-            row = "  {:8}{:<27}{:<27}{:<27}{:<27}"
+            row = "   {:8}{:<22}{:<22}{:<22}{:<22}"
+            title_row = '\033[1m' + row + '\033[0m'
             print(title_row.format(
                 "",
                 "Total".rjust(count_len),
