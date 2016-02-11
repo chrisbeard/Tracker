@@ -214,7 +214,7 @@ def fetch_all(tracker = None):
         List of entries for tracker. If no tracker, returns all entries
     """
     if tracker:
-        query = "SELECT * FROM TRACKERS where name=:tracker"
+        query = "SELECT * FROM TRACKERS where name=:tracker ORDER BY day ASC"
         cursor = db.execute(query, {"tracker": tracker})
     else:
         query = "SELECT * FROM TRACKERS"
@@ -535,9 +535,7 @@ def display_plot(tracker):
             error("Cannot show stats for unknown tracker '" + tracker + "'")
 
         # TODO: is is possible for the entries to be unorded?
-        query = "SELECT * FROM TRACKERS where name=:tracker ORDER BY day ASC"
-        cursor = db.execute(query, {"tracker": tracker})
-        results = cursor.fetchall()
+        results = fetch_all(tracker)
 
         # extract data for plotting
         dates = [r[1] for r in results]
