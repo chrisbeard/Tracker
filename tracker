@@ -368,6 +368,36 @@ def delete_tracker(tracker):
         print("Deletion cancelled")
 
 
+def max_streak(tracker_data):
+    """Find longest streak for a tracker
+
+    Input:
+        tracker_data: list of entries for a tracker
+    Output:
+        longest number of consecutive entries
+    """
+    max_streak = 0
+    streak = 0
+    streak_start = None
+    streak_end = None
+    current_start = None
+    last_day = None
+    for entry in tracker_data:
+        entry_day = str_to_date(entry[1])
+        next_day = (entry_day - timedelta(days=1))
+        if last_day == next_day:
+            streak += 1
+        else:
+            streak = 1
+            current_start = entry_day
+        if streak > max_streak:
+            max_streak = streak
+            streak_start = current_start
+            streak_end = entry_day
+        last_day = entry_day
+    return max_streak, streak_start, streak_end
+
+
 def correlation(x, y):
     """Find correlation coefficient for two sets of data
 
@@ -508,6 +538,12 @@ def display_stats(trackers):
                     " (" + str(min_value[1]) + ")")
             print(point.format("max", gen[3].rjust(gen_len)) +
                     " (" + str(max_value[1]) + ")")
+
+            print()
+
+            streak = max_streak(results)
+            print(point.format("longest streak", str(streak[0]) +
+                    " days (" + str(streak[1]) + " to " + str(streak[2]) + ")"))
 
             print()
 
