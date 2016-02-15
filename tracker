@@ -368,7 +368,7 @@ def delete_tracker(tracker):
         print("Deletion cancelled")
 
 
-def max_streak(tracker_data):
+def longest_streak(tracker_data):
     """Find longest streak for a tracker
 
     Input:
@@ -396,6 +396,30 @@ def max_streak(tracker_data):
             streak_end = entry_day
         last_day = entry_day
     return max_streak, streak_start, streak_end
+
+
+def longest_break(tracker_data):
+    """Find longest streak for a tracker
+
+    Input:
+        tracker_data: list of entries for a tracker
+    Output:
+        longest number of consecutive entries
+    """
+    max_gap = 0
+    gap_start = None
+    gap_end = None
+    previous = None
+    for entry in tracker_data:
+        entry_day = str_to_date(entry[1])
+        if previous:
+            gap = (entry_day - previous).days
+            if gap > max_gap:
+                max_gap = gap
+                gap_start = previous
+                gap_end = entry_day
+        previous = entry_day
+    return max_gap, gap_start, gap_end
 
 
 def correlation(x, y):
@@ -520,31 +544,35 @@ def display_stats(trackers):
                 if not maxs[day_index] or count > maxs[day_index]:
                     maxs[day_index] = count
 
-            # format string for single data point
-            point = "   {:3} -- {}"
 
             print("{}: {} entries\n".format(t, num_entries))
 
             # TODO: decide how to format output for better readability
+            # Give general tracker stats
             total = sum(counts)
             avg = total/sum(tally)
             gen = [total, avg, min_value[0], max_value[0]]
             gen = ['{:,.3f}'.format(v) for v in gen]
             gen_len = len(max(gen, key=len))
 
+            # format string for single data point
+            point = "   {:3} -- {}"
             print(point.format("sum", gen[0].rjust(gen_len)))
             print(point.format("avg", gen[1].rjust(gen_len)))
             print(point.format("min", gen[2].rjust(gen_len)) +
                     " (" + str(min_value[1]) + ")")
             print(point.format("max", gen[3].rjust(gen_len)) +
                     " (" + str(max_value[1]) + ")")
-
             print()
 
-            streak = max_streak(results)
-            print(point.format("longest streak", str(streak[0]) +
-                    " days (" + str(streak[1]) + " to " + str(streak[2]) + ")"))
+            # Give stats about consistency
+            streak = longest_streak(results)
+            gap = longest_break(results)
 
+            # format string for streak data
+            alt_point = "   {:14} -- {:2} day(s)  ({} to {})"
+            print(alt_point.format("longest streak", streak[0], streak[1], streak[2]))
+            print(alt_point.format("longest break", gap[0], gap[1], gap[2]))
             print()
 
             # prepare min/max data for printing
