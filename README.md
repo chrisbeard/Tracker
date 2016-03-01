@@ -87,23 +87,27 @@ $
 ####Show detailed tracker stats
 ```
 $ tracker stats pushups
-pushups: 12 entries
+pushups: 14 entries
 
-  sum -- 315.000
-  avg --  26.250
-  min --  10.000 (2016-01-05)
-  max --  50.000 (2016-01-06)
+   sum -- 350.000
+   avg --  25.000
+   min --  10.000 (2016-01-05)
+   max --  50.000 (2016-01-06)
 
-         Total                        Avg                        Min                        Max
-Sun --  30.000                     30.000                     30.000                     30.000
-Mon --  40.000                     40.000                     40.000                     40.000
-Tue --  10.000                     10.000                     10.000                     10.000
-Wed --  80.000                     40.000                     30.000                     50.000
-Thu --  80.000                     26.667                     25.000                     30.000
-Fri --  10.000                     10.000                     10.000                     10.000
-Sat --  65.000                     21.667                     10.000                     30.000
+   longest streak --  5 day(s)  (2016-01-13 to 2016-01-17)
+   longest break  -- 25 day(s)  (2016-02-04 to 2016-02-29)
+
+             Total                  Avg                   Min                   Max
+   Sun --   30.000               30.000                30.000                30.000
+   Mon --   50.000               25.000                10.000                40.000
+   Tue --   10.000               10.000                10.000                10.000
+   Wed --   80.000               40.000                30.000                50.000
+   Thu --  105.000               26.250                25.000                30.000
+   Fri --   10.000               10.000                10.000                10.000
+   Sat --   65.000               21.667                10.000                30.000
 $
 ```
+Note: Longest break does not consider time between last entry and current day, as it may not make sense.
 
 
 ####Show correlation between trackers
