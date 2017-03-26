@@ -1,4 +1,4 @@
-#Tracker
+# Tracker
 
 By Chris Beard (https://github.com/chrisbeard).
 
@@ -9,9 +9,9 @@ Data is stored in a sqlite3 database, which resides in your home directory. All 
 Data is organized by tracker name, and each entry is associated with a date under-the-hood. Tracker data can then be visualized and tracker statistics can be displayed.
 
 
-##Usage:
+## Usage:
 
-####Add a new tracker
+#### Add a new tracker
 
 ```
 $ tracker update pushups 10
@@ -21,7 +21,7 @@ Confirm 'pushups' to create: pushups
 $
 ```
 
-####List existing trackers
+#### List existing trackers
 
 ```
 $ tracker list
@@ -31,7 +31,7 @@ Current Trackers:
 $
 ```
 
-####Update a tracker for today
+#### Update a tracker for today
 
 ```
 $ tracker update pushups 25
@@ -40,7 +40,7 @@ $
 ```
 Note: If the tracker already has data for today, it will *add* the value given to the existing value.
 
-####Update a tracker for arbitrary date
+#### Update a tracker for arbitrary date
 
 ```
 $ tracker update pushups
@@ -51,7 +51,7 @@ $
 ```
 Note: If the tracker already has data for the given day, it will *add* the value given to the existing value.
 
-####Show raw data for a tracker
+#### Show raw data for a tracker
 ```
 $ tracker show pushups
 2016-01-05 | 10.0
@@ -60,7 +60,7 @@ $ tracker show pushups
 $
 ```
 
-####Delete a tracker
+#### Delete a tracker
 ```
 $ tracker delete pushups
 Type 'puhsups' to confirm: pushups
@@ -70,7 +70,7 @@ $
 Note: Deletion is permanent and cannot be undone!
 
 
-####Show global tracker stats
+#### Show global tracker stats
 ```
 $ tracker stats
 2 tracker(s)
@@ -84,7 +84,7 @@ naps
 $
 ```
 
-####Show detailed tracker stats
+#### Show detailed tracker stats
 ```
 $ tracker stats pushups
 pushups: 14 entries
@@ -110,7 +110,7 @@ $
 Note: Longest break does not consider time between last entry and current day, as it may not make sense.
 
 
-####Show correlation between trackers
+#### Show correlation between trackers
 ```
 $ tracker stats pushups naps
 Correlation coefficient: -0.7574057028716906
@@ -118,7 +118,7 @@ $
 ```
 
 
-####Plot a tracker
+#### Plot a tracker
 ```
 $ tracker plot pushups
 
